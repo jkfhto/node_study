@@ -19,18 +19,31 @@ const path = require('path');
 //     } 
 // })
 
-//同步创建目录
-function mkdir(dir) {
-    let arr = dir.split('/');
-    for (var i = 0, j = arr.length; i < j; i++) {
-        let currentPath = arr.slice(0, i + 1).join('/');
-        currentPath = path.resolve(__dirname, currentPath)
-        try {
-            fs.accessSync(currentPath)
-        } catch (e) {
-            fs.mkdirSync(currentPath);
-        }
+//异步创建目录
+function mkdir(dir, callback = () => { }) {
+    const arr = dir.split('/');
+    let index = 0;
+    function next() {
+        if (arr.length === index) return callback();
+        let currentPath = arr.slice(0, ++index).join('/');
+        currentPath = path.resolve(__dirname, currentPath);
+        fs.access(currentPath, (err) => {
+            if (err) {
+                // 目录不存在，创建目录
+                fs.mkdir(currentPath, (err) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        next();
+                    }
+                })
+            } else {
+                // 目录已经存在，继续创建下一层目录
+                next();
+            }
+        })
     }
+    next();
 }
 const dir = 'a/b/c/d';
-mkdir(dir)
+mkdir(dir, () => { console.log("创建目录成功") })
