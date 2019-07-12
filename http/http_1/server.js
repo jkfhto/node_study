@@ -15,14 +15,16 @@ const server = http.createServer((req, res) => {
     console.log(req.httpVersion, req.httpVersionMajor, req.httpVersionMinor);//http版本，大版本，小版本
 
     //请求头
-    console.log(`headers：${JSON.stringify(req.headers)}`);//所有的key都是小写的
+    // console.log(`headers：${JSON.stringify(req.headers)}`);//所有的key都是小写的
 
     // 请求体
     let arr = [];
     req.on('data', function (chunk) { // 没有数据不会触发data
         arr.push(chunk)
     })
-    req.on('end', function (chunk) { // 没有请求体会触发end
+    req.on('end', function () { // 没有请求体会触发end
+        res.statusCode = 200;
+        console.log(req.headers['content-type'])
         if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {//处理表格
             let str = Buffer.concat(arr).toString(); // a=1&b=2  => {a:1,b:2}
             let obj = querystring.parse(str);
@@ -42,16 +44,16 @@ const server = http.createServer((req, res) => {
 
     //res是一个可写流 write end
     // 响应行 状态码 
-    res.statusCode = 200;
+    // res.statusCode = 200;
     // res.statusCode = 204;//没有响应体
 
     //响应头
-    res.setHeader('Content-Type', 'text/html;charset=utf-8');
+    // res.setHeader('Content-Type', 'text/html;charset=utf-8');
 
     //响应体
-    res.write('node中文');//write 需要在end之前 
+    // res.write('node中文');//write 需要在end之前 
 
-    res.end();// 每次调用end 方法传递参数都会调用write方法
+    // res.end();// 每次调用end 方法传递参数都会调用write方法
 
 });
 
