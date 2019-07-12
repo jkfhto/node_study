@@ -35,7 +35,10 @@ const server = http.createServer((req, res) => {
             let obj = JSON.parse(str);
             res.setHeader('Content-Type', 'application/json;charset=utf-8');
             res.end(JSON.stringify(obj)); // 前后端通信 都是json
-        } else if (req.headers['content-type'].includes('text/plain')) {//处理纯文本
+        } else if (req.headers['content-type']&&req.headers['content-type'].includes('text/plain')) {//处理纯文本
+            res.setHeader('Content-Type', 'text/plain;charset=utf-8');
+            res.end(Buffer.concat(arr));
+        } else {//默认
             res.setHeader('Content-Type', 'text/plain;charset=utf-8');
             res.end(Buffer.concat(arr));
         }
