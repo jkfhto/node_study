@@ -26,7 +26,7 @@ class Server {
             const stats = await fs.stat(absPath);
             //处理目录
             if (stats.isDirectory()) {
-                absPath = path.join(__dirname, 'index.html');
+                absPath = path.join(absPath, 'index.html');
                 await fs.access(absPath);//判断文件是否存在
             }
             //处理文件
